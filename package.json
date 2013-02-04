@@ -22,7 +22,7 @@
   "author": "Paul Cullender",
   "license": "MIT",
   "config":{
-    "stations":[],
+    "bricks":[],
     "autoRegister":true
   }
 }

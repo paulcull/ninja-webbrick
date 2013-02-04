@@ -1,13 +1,14 @@
 var util = require('util')
   , stream = require('stream')
   , os = require('os')
-  , helpers = require('./lib/helpers')
+//  , helpers = require('./lib/helpers')
 //  , Hue = require('hue.js')
 //  , Light = require('./lib/Light');
   , bricks = require('./conf/WBUser')
-  , webbrick = require('./lib/WBDriver');
+//  , WB = require('./lib/WBDriver');
+  , WB = require('webbrick.js');
 
-util.inherits(webbrick,stream);
+util.inherits(WB,stream);
 module.exports = wb;
 
 function wb(opts,app) {
@@ -16,7 +17,7 @@ function wb(opts,app) {
 
   this._app = app;
   this._opts = opts;
-  this._opts.stations = opts.stations || [];
+  this._opts.bricks = opts.bricks || [];
 
   console.log(this._app)
   console.log(this._opts)
@@ -25,11 +26,12 @@ function wb(opts,app) {
   this.appName = 'Webbrick Ninja Module';
 
   app.on('client::up', function() {
+  this._app.log.info('WB: Loading...')
 
-    if (self._opts.stations.length>0) {
-      loadStations.call(self);
+    if (self._opts.bricks.length>0) {
+      loadbricks.call(self);
     } else {
-      findStations.call(self);
+      findbricks.call(self);
     }
   });
 };
@@ -39,9 +41,9 @@ hue.prototype.config = function(config) {
   // this.emit('config')
 };
 
-function findStations() {
+function findbricks() {
 
-  this._app.log.info('Hue: No configuration')
+  this._app.log.info('WB: No configuration')
   var self = this;
 
   // If we do not want to auto register
@@ -49,24 +51,24 @@ function findStations() {
 
   setInterval(function() {
 
-    Hue.discover(function(stations) {
-      stations.forEach(registerStation.bind(self));
+    webbrick.discover(function(bricks) {
+      bricks.forEach(registerbrick.bind(self));
     });
   },20000);
 };
 
-function registerStation(station) {
+function registerbrick(brick) {
 
-  if (this._opts.stations.indexOf(station)>-1) {
-    // We already have this station registered.
-    this._app.log.info('Hue: Already configured Hue %s, aborting',station);
+  if (this._opts.bricks.indexOf(brick)>-1) {
+    // We already have this brick registered.
+    this._app.log.info('WB: Already configured WB %s, aborting',brick);
     return;
   }
 
   var self = this;
 
-  var client = Hue.createClient({
-    stationIp:station,
+  var client = WB.createClient({
+    brickIp:brick,
     appName:this.appName
   });
 
@@ -76,36 +78,36 @@ function registerStation(station) {
   };
 
 
-  self._app.log.info('Hue: Please press link button on station %s',station);
+  self._app.log.info('WB: Please press link button on brick %s',brick);
 
   client.register(registerOpts,function(err) {
 
     if (err) {
       // Do nothing?
-      self._app.log.info('Timed out waiting for station')
+      self._app.log.info('Timed out waiting for brick')
       return;
     }
 
-    self._app.log.info('Hue: station %s registered, saving',station);
-    self._opts.stations.push(station);
+    self._app.log.info('WB: brick %s registered, saving',brick);
+    self._opts.bricks.push(brick);
 
     self.save();
 
-    loadStations.call(self);
+    loadbricks.call(self);
   });
 };
 
-function loadStations() {
+function loadbricks() {
 
-  this._opts.stations.forEach(fetchLights.bind(this));
+  this._opts.bricks.forEach(fetchLights.bind(this));
 };
 
-function fetchLights(station,stationIndex) {
+function fetchLights(brick,brickIndex) {
 
   var self = this;
 
   var client = Hue.createClient({
-    stationIp:station,
+    brickIp:brick,
     appName:this.appName
   });
 
@@ -119,7 +121,7 @@ function fetchLights(station,stationIndex) {
 
     Object.keys(lights).forEach(function(lightIndex) {
 
-      self.emit('register',new Light(client,stationIndex,lightIndex))
+      self.emit('register',new Light(client,brickIndex,lightIndex))
     });
   });
 };

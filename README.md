@@ -11,5 +11,3 @@ npm install
 ```
 
 ### Step 2 - restart process
-
-### Step 3 - press button on Hue
