@@ -1,0 +1,45 @@
+{
+	"HOMEURL" :		"192.168.1.200",
+	"HOMEPORT" :  8080,
+	"Zones": {
+		"hotwater" : "zone1",
+		"dining" : "zone2",
+		"office" : "zone3",
+		"hall" : "zone4",
+		"sittingroom" : "zone5",
+		"breakfastroom" : "zone6",
+		"familybath" : "zone7",
+		"masterensuite" : "zone8",
+		"gndshower" : "zone9",
+		"playroom" : "zone10",
+		"kitchen" : "zone11",
+		"masterbed" : "zone12",
+		"landing" : "zone13",
+		"guestbed" : "zone14",
+		"guestensuite" : "zone15",
+		"sparebed" : "zone16",
+		"georgebed" : "zone17",
+		"lucybed" : "zone18",
+		"porch" : "zone19",
+		"outsidefront" : "zone20",
+		"outsiderear" : "zone21",
+		"garage" : "zone22"
+	},
+	"Bricks": {
+		"heating" : 5,
+		"breakfastroom" : 1,
+		"kitchen" : 1,
+		"entrancehall" : 2,
+		"playroom" : 1
+	},
+	"HeatingState": {
+		"Demand" : 1,
+		"Idle" : 0
+	},
+	"ActiveStateSensor": {
+		"breakfastroom" : 0,
+		"entrancehall" : 0,
+		"playroom" : 1
+	}
+}
+
