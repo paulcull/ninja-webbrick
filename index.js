@@ -23,6 +23,8 @@ var WB_ADDED = {
   ]
 };
 
+var enabled = false;
+
 /**
  * Called when our client starts up
  * @constructor
@@ -53,12 +55,14 @@ function wbDriver(opts,app) {
     opts.hasSentAnnouncement = true;
     self.save();
   }
-    // for each of the devices in the config
-    wbds.devices.forEach(function(wbOpts){
-      // Register a device
-      self._app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
-      self.emit('register', new Device(app, wbOpts));
-    });
+  if (enabled) {
+      // for each of the devices in the config
+      wbds.devices.forEach(function(wbOpts){
+        // Register a device
+        self._app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
+        self.emit('register', new Device(app, wbOpts));
+      });
+    }
   });
 };
 
