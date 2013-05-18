@@ -10,8 +10,8 @@ var Device = require('./lib/device')
 util.inherits(nbWebBrick,stream);
 
 // TODO - use config handler
-var enabled = false;
-var monitor = false;
+var enabled = true;
+var monitor = true;
 
 // Our greeting to the user.
 var HELLO_WORLD_ANNOUNCEMENT = {
