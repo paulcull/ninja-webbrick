@@ -3,8 +3,8 @@ var WB = require('../wblib/wb-interface.js');
 var appName = "My App1";
 var util = require('util')
 
-WB.discover(function(stations) {
-
+WB.listen('2552',function(stations) {
+  console.log(JSON.stringify(stations));
   stations.forEach(fetchLights);
 });
 

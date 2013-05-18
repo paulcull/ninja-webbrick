@@ -1,8 +1,8 @@
 var WB = require('./WB');
 
-// TODO auto discover
-//exports.discover = require('./Discoverer');
-exports.discover = require('../wbexample/udp_server');
+// TODO auto discover - See discover library
+// exports.discover = require('./Discoverer');
+exports.listen = require('./UDPServer');
 
 exports.createClient = function(wbOpts) {
  return new WB(wbOpts);

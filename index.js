@@ -3,27 +3,24 @@ var Device = require('./lib/device')
   , stream = require('stream')
   , configHandlers = require('./lib/config-handlers')
   , wbds = require('./conf/devices')
-  , wb = require('./wblib/WB');
-
+  , Monitor = require('../ninja-webbrick/wblib/wb-interface')
+  , wbHelpers = require('../ninja-webbrick/wblib/helpers');
+ 
 // Give our driver a stream interface
-util.inherits(wbDriver,stream);
+util.inherits(nbWebBrick,stream);
+
+// TODO - use config handler
+var enabled = true;
+var monitor = true;
 
 // Our greeting to the user.
 var HELLO_WORLD_ANNOUNCEMENT = {
   "contents": [
-    { "type": "heading",      "text": "Ninja Webbrick Driver Loaded" },
-    { "type": "paragraph",    "text": "The webbrick driver for ninja blocks has been loaded. You should not see this message again." }
-  ]
-};
-// Our greeting to the user.
-var WB_ADDED = {
-  "contents": [
-    { "type": "heading",      "text": "Ninja Webbrick Added" },
-    { "type": "paragraph",    "text": "The webbrick driver for ninja blocks has added a new device." }
+    { "type": "heading",      "text": "WebBrick Driver Loaded" },
+    { "type": "paragraph",    "text": "The WebBrick driver has been loaded. You should not see this message again." }
   ]
 };
 
-var enabled = false;
 
 /**
  * Called when our client starts up
@@ -39,31 +36,58 @@ var enabled = false;
  * @fires register - Emit this when you wish to register a device (see Device)
  * @fires config - Emit this when you wish to send config data back to the Ninja Platform
  */
-function wbDriver(opts,app) {
+function nbWebBrick(opts,app) {
+
+if (enabled) {
 
   var self = this;
-  this._app = app;
+  // create a holder for new devices 
+  var devCount = 0;
+  var devs = new Array();  
 
+  this._app = app;
   app.on('client::up',function(){
 
-  // The client is now connected to the Ninja Platform
+    // The client is now connected to the Ninja Platform
 
-  // Check if we have sent an announcement before.
-  // If not, send one and save the fact that we have.
-  if (!opts.hasSentAnnouncement) {
-    self.emit('announcement',HELLO_WORLD_ANNOUNCEMENT);
-    opts.hasSentAnnouncement = true;
-    self.save();
-  }
-  if (enabled) {
-      // for each of the devices in the config
+    // Check if we have sent an announcement before.
+    // If not, send one and save the fact that we have.
+    if (!opts.hasSentAnnouncement) {
+      self.emit('announcement',HELLO_WORLD_ANNOUNCEMENT);
+      opts.hasSentAnnouncement = true;
+      self.save();
+    }
+
+    // Loop through all the devices in the devices.json file
       wbds.devices.forEach(function(wbOpts){
         // Register a device
         self._app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
-        self.emit('register', new Device(app, wbOpts));
+        devs.push(new Device(app, wbOpts));
+        self.emit('register', devs[devCount]);
+        devCount++;
       });
-    }
   });
+
+  this.devs = devs;
+
+  self._app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
+
+}
+  //startup listener if enabled
+  if (monitor) {
+    self._app.log.info('(WebBrick) Starting up WebBrick monitor on port %s',2552);
+    var UDPListener = new Monitor.listen('2552',devs,function(UDPEvent){
+      var devRef = wbHelpers.getDevIndex(devs, UDPEvent.addr, UDPEvent.PacketSource, UDPEvent.SourceChannel, app.id);
+        if (devRef != 'error') {
+          self._app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
+          devs[devRef].emit('data',UDPEvent.data)
+          } else {
+            self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
+          }
+      });
+    this.UDPListener = UDPListener
+  }
+
 };
 
 /**
@@ -76,7 +100,7 @@ function wbDriver(opts,app) {
  * @param  {Object}   rpc.params Any input data the user provided
  * @param  {Function} cb      Used to match up requests.
  */
-wbDriver.prototype.config = function(rpc,cb) {
+nbWebBrick.prototype.config = function(rpc,cb) {
 
   var self = this;
   // If rpc is null, we should send the user a menu of what he/she
@@ -93,28 +117,6 @@ wbDriver.prototype.config = function(rpc,cb) {
   }
 };
 
-wbDriver.prototype.findStations = function() {
-  this._app.log.info('WB: No configuration')
-  var self = this;
-
-  // If we do not want to auto register
-  if (!this._opts.autoRegister) return;
-
-  wb.discover(function(stations) {
-    stations.forEach(function(station) {
-      self._app.log.info('WB: Station', station);
-      // If we have already registered this
-      if (self._opts.stations.indexOf(station)>-1) return;
-
-      // If we have already announced this
-      // if (self._opts.sentAnnouncements.indexOf(station) > -1) return;
-
-      self.emit('announcement',WB_ANNOUNCEMENT);
-      self.save();
-      self.registerStation(station);
-    });
-  });
-};
 
 // Export it
-module.exports = wbDriver;
+module.exports = nbWebBrick;
