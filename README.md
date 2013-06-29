@@ -6,7 +6,7 @@ Status: Stable
 License: BSD
 =====================
 
-This is a driver for the now defunct H2M8 home automation
+This is a module for the now defunct H2M8 home automation
 system. The WebBricks are the units controlling the 
 physical system
 
@@ -18,7 +18,7 @@ This supports the mapping of devices to the physical units
 as well as a UDP processes for events from the webBricks
 
 ## Installation
-### Step 1 - fetch module (must be on develop branch)
+### Step 1 - fetch module
 ```
 cd PATH_TO_NINJA_CLIENT/drivers
 git clone https://github.com/paulcull/ninja-webbrick.git
