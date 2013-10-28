@@ -38,6 +38,10 @@ var HELLO_WORLD_ANNOUNCEMENT = {
  */
 function nbWebBrick(opts,app) {
 
+if (!enabled) {
+  app.log.info('(WebBrick) WebBrick driver is disabled');
+}
+
 if (enabled) {
 
   var self = this;
