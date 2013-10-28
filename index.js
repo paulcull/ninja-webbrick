@@ -38,7 +38,7 @@ var HELLO_WORLD_ANNOUNCEMENT = {
  */
 function nbWebBrick(opts,app) {
 
-if (!enabled) {
+if (!opts.enabled) {
   app.log.info('(WebBrick) WebBrick driver is disabled');
 }
 
