@@ -42,47 +42,48 @@ var HELLO_WORLD_ANNOUNCEMENT = {
  */
 function nbWebBrick(opts,app) {
 
-//console.log(opts);
+console.log(opts);
+console.log(app);
 
-if (!opts.enabled) {
-  app.log.info('(WebBrick) WebBrick driver is disabled');
-}
+  if (!opts.enabled) {
+    app.log.info('(WebBrick) WebBrick driver is disabled');
+  }
 
-if (opts.enabled) {
+  if (opts.enabled) {
 
-  var self = this;
-  // create a holder for new devices 
-  var devCount = 0;
-  var devs = new Array();  
+    var self = this;
+    // create a holder for new devices 
+    var devCount = 0;
+    var devs = new Array();  
 
-  this._app = app;
-  app.on('client::up',function(){
+    this._app = app;
+    app.on('client::up',function(){
 
-    // The client is now connected to the Ninja Platform
+      // The client is now connected to the Ninja Platform
 
-    // Check if we have sent an announcement before.
-    // If not, send one and save the fact that we have.
-    if (!opts.hasSentAnnouncement) {
-      self.emit('announcement',HELLO_WORLD_ANNOUNCEMENT);
-      opts.hasSentAnnouncement = true;
-      self.save();
-    }
+      // Check if we have sent an announcement before.
+      // If not, send one and save the fact that we have.
+      if (!opts.hasSentAnnouncement) {
+        self.emit('announcement',HELLO_WORLD_ANNOUNCEMENT);
+        opts.hasSentAnnouncement = true;
+        self.save();
+      }
 
-    // Loop through all the devices in the devices.json file
-      wbds.devices.forEach(function(wbOpts){
-        // Register a device
-        self._app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
-        devs.push(new Device(app, wbOpts));
-        self.emit('register', devs[devCount]);
-        devCount++;
-      });
-  });
+      // Loop through all the devices in the devices.json file
+        wbds.devices.forEach(function(wbOpts){
+          // Register a device
+          self._app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
+          devs.push(new Device(app, wbOpts));
+          self.emit('register', devs[devCount]);
+          devCount++;
+        });
+    });
 
-  this.devs = devs;
+    this.devs = devs;
 
-  self._app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
+    self._app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
 
-}
+  }
   //startup listener if enabled
   if (monitor) {
     self._app.log.info('(WebBrick) Starting up WebBrick monitor on port %s',2552);
