@@ -45,18 +45,17 @@ function nbWebBrick(opts,app) {
 console.log(opts);
 console.log(app);
 
-  if (!opts.enabled) {
+var self = this;
+this._app = app;
+this._devs = [];
+
+  if (!enabled) {
     app.log.info('(WebBrick) WebBrick driver is disabled');
-  }
-
-  if (opts.enabled) {
-
-    var self = this;
+  } else {
     // create a holder for new devices 
     var devCount = 0;
     var devs = new Array();  
 
-    this._app = app;
     app.on('client::up',function(){
 
       // The client is now connected to the Ninja Platform
@@ -79,13 +78,13 @@ console.log(app);
         });
     });
 
-    this.devs = devs;
+    this._devs = devs;
 
     self._app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
 
   }
   //startup listener if enabled
-  if (monitor) {
+  if (enabled && monitor) {
     self._app.log.info('(WebBrick) Starting up WebBrick monitor on port %s',2552);
     var UDPListener = new Monitor.listen('2552',devs,function(UDPEvent){
       var devRef = wbHelpers.getDevIndex(devs, UDPEvent.addr, UDPEvent.PacketSource, UDPEvent.SourceChannel, app.id);

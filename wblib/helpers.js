@@ -67,7 +67,7 @@ exports.arrayFromMask = arrayFromMask;
 // @devs collection of device ojects
 // @IP - IP address
 // @DevType - type of device 
-// @ch - channel
+// @ch - channel 
 exports.getDevIndex = function(devs, IP, DevType, ch, appID) {
   // loop through until found
   var ret = 'error';
