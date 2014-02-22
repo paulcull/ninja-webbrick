@@ -48,9 +48,10 @@ WB.prototype.tempState = function(ch,cb) {
       if (typeof b != 'undefined') {
         xml(b, function (error, result) {
             if (error) {
-              console.log('XML parse error');
+              //console.log('XML parse error');
               return cb(error);
             } else if (/val/g.test(b)) {
+                  //console.log(result.val);
                   return cb(false,result.val);
             }
         });

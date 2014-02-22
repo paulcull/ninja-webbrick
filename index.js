@@ -2,16 +2,20 @@ var Device = require('./lib/device')
   , util = require('util')
   , stream = require('stream')
   , configHandlers = require('./lib/config-handlers')
-  , wbds = require('./conf/devices')
   , Monitor = require('../ninja-webbrick/wblib/wb-interface')
   , wbHelpers = require('../ninja-webbrick/wblib/helpers');
+
+//Limit Devices to a sample for dev / testing
+var wbds = require('./conf/devices')
+//var wbds = require('./conf/testdevices')
+//var wbds = require('./conf/testdevices_1temp');
  
 // Give our driver a stream interface
 util.inherits(nbWebBrick,stream);
 
 // TODO - use config handler
-var enabled = false;
-var monitor = false;
+var enabled = true;
+var monitor = true;
 
 // Our greeting to the user.
 var HELLO_WORLD_ANNOUNCEMENT = {
@@ -38,11 +42,13 @@ var HELLO_WORLD_ANNOUNCEMENT = {
  */
 function nbWebBrick(opts,app) {
 
+//console.log(opts);
+
 if (!opts.enabled) {
   app.log.info('(WebBrick) WebBrick driver is disabled');
 }
 
-if (enabled) {
+if (opts.enabled) {
 
   var self = this;
   // create a holder for new devices 
@@ -86,7 +92,7 @@ if (enabled) {
           self._app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
           devs[devRef].emit('data',UDPEvent.data)
           } else {
-            self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
+            //self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
           }
       });
     this.UDPListener = UDPListener
