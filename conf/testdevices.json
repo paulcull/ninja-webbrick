@@ -1,0 +1,61 @@
+{
+	"devices" : [
+		{
+			"brickIp":"192.168.1.243",
+			"deviceType":"temp",
+			"deviceName":"Outside Temp",
+			"zoneName":"outsiderear",
+			"zoneArea":"main",
+			"channel":1,
+			"readable":true,
+			"writeable":false,
+			"G":"243T01",
+			"V":0,
+			"D":202,
+			"Interval":10000
+		},
+		{
+			"brickIp":"192.168.1.243",
+			"deviceType":"button",
+			"deviceName":"Kitchen Switch 1",
+			"zoneName":"kitchen",
+			"zoneArea":"main",
+			"channel":0,
+			"readable":false,
+			"writeable":true,
+			"G":"243DI00",
+			"V":0,
+			"D":233,
+			"Interval":1800000
+		},
+		{
+			"brickIp":"192.168.1.243",
+			"deviceType":"pir",
+			"deviceName":"Breakfast Room PIR Trigger",
+			"zoneName":"breakfastroom",
+			"zoneArea":"main",
+			"channel":"8",
+			"readable":true,
+			"writeable":false,
+			"G":"243DI08",
+			"V":0,
+			"D":204,
+			"Interval":10000
+		},
+		{
+			"brickIp":"192.168.1.243",
+			"deviceType":"dimmer",
+			"deviceName":"Breakfast Room Dimmer",
+			"zoneName":"breakfastroom",
+			"zoneArea":"main",
+			"channel":3,
+			"readable":true,
+			"writeable":true,
+			"G":"243D03",
+			"V":0,
+			"D":234,
+			"Interval":15000
+
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"devices" : [
+		{
+			"brickIp":"192.168.1.243",
+			"deviceType":"temp",
+			"deviceName":"Outside Temp",
+			"zoneName":"outsiderear",
+			"zoneArea":"main",
+			"channel":1,
+			"readable":true,
+			"writeable":false,
+			"G":"243T01",
+			"V":0,
+			"D":202,
+			"Interval":15000
+		}
+	]
+}
