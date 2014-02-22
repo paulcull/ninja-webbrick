@@ -71,7 +71,7 @@ if (opts.enabled) {
     // Loop through all the devices in the devices.json file
       wbds.devices.forEach(function(wbOpts){
         // Register a device
-        self._app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
+        app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
         devs.push(new Device(app, wbOpts));
         self.emit('register', devs[devCount]);
         devCount++;
@@ -80,19 +80,19 @@ if (opts.enabled) {
 
   this.devs = devs;
 
-  self._app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
+  app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
 
 }
   //startup listener if enabled
   if (monitor) {
-    self._app.log.info('(WebBrick) Starting up WebBrick monitor on port %s',2552);
+    app.log.info('(WebBrick) Starting up WebBrick monitor on port %s',2552);
     var UDPListener = new Monitor.listen('2552',devs,function(UDPEvent){
       var devRef = wbHelpers.getDevIndex(devs, UDPEvent.addr, UDPEvent.PacketSource, UDPEvent.SourceChannel, app.id);
         if (devRef != 'error') {
-          self._app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
+          app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
           devs[devRef].emit('data',UDPEvent.data)
           } else {
-            //self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
+            //app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
           }
       });
     this.UDPListener = UDPListener
