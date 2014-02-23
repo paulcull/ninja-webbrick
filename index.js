@@ -92,7 +92,7 @@ this._devs = [];
           self._app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
           devs[devRef].emit('data',UDPEvent.data)
           } else {
-            //self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
+            self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
           }
       });
     this.UDPListener = UDPListener
