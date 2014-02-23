@@ -47,7 +47,6 @@ console.log(app);
 
 var self = this;
 this._app = app;
-this._devs = [];
 
   if (!enabled) {
     app.log.info('(WebBrick) WebBrick driver is disabled');
@@ -78,19 +77,17 @@ this._devs = [];
         });
     });
 
-    this._devs = devs;
-
     self._app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
 
   }
   //startup listener if enabled
   if (enabled && monitor) {
     self._app.log.info('(WebBrick) Starting up WebBrick monitor on port %s',2552);
-    var UDPListener = new Monitor.listen('2552',this._devs,function(UDPEvent){
-      var devRef = wbHelpers.getDevIndex(this._devs, UDPEvent.addr, UDPEvent.PacketSource, UDPEvent.SourceChannel, app.id);
+    var UDPListener = new Monitor.listen('2552',devs,function(UDPEvent){
+      var devRef = wbHelpers.getDevIndex(devs, UDPEvent.addr, UDPEvent.PacketSource, UDPEvent.SourceChannel, app.id);
         if (devRef != 'error') {
-          self._app.log.debug('(Webbrick) set %s at %s to data %s',this._devs[devRef].wbOpts.deviceType,this._devs[devRef].guid,JSON.stringify(UDPEvent.data));
-          this._devs[devRef].emit('data',UDPEvent.data)
+          self._app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
+          devs[devRef].emit('data',UDPEvent.data)
           } else {
             self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
           }
