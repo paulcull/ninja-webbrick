@@ -1611,6 +1611,20 @@
 			"Interval":20000
 		},
 		{
+			"brickIp":"192.168.1.250",
+			"deviceType":"temp",
+			"deviceName":"Garage Temp",
+			"zoneName":"garage",
+			"zoneArea":"main",
+			"channel":1,
+			"readable":true,
+			"writeable":false,
+			"G":"250T01",
+			"V":0,
+			"D":202,
+			"Interval":15000
+		},		
+		{
 			"brickIp":"192.168.1.243",
 			"deviceType":"text",
 			"deviceName":"Heartbeat",
@@ -1704,6 +1718,20 @@
 			"readable":true,
 			"writeable":false,
 			"G":"249ST00",
+			"V":0,
+			"D":240,
+			"Interval":20000
+		},
+		{
+			"brickIp":"192.168.1.250",
+			"deviceType":"text",
+			"deviceName":"Heartbeat",
+			"zoneName":"heartbeat",
+			"zoneArea":"main",
+			"channel":"0",
+			"readable":true,
+			"writeable":false,
+			"G":"250ST00",
 			"V":0,
 			"D":240,
 			"Interval":20000
