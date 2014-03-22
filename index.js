@@ -10,7 +10,8 @@ var Device = require('./lib/device')
 var wbds = require('./conf/devices')
 //var wbds = require('./conf/testdevices')
 //var wbds = require('./conf/testdevices_1temp');
- 
+//var wbds = {"devices":[]};
+
 // Give our driver a stream interface
 util.inherits(nbWebBrick,stream);
 

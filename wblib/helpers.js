@@ -115,7 +115,8 @@ exports.getDevIndex = function(devs, IP, DevType, ch, appID) {
 
   for (var d=0;d<devs.length;d++) {
     var tempDev = devs[d];
-    var _guid = appID+'_'+ipParts[3]+_DevType+_ch+'_0_'+tempDev.D;
+    var _guid = appID+'_WBD'+ipParts[3]+_DevType+_ch+'_0_'+tempDev.D;
+    //console.log('--------------  comparing %s with %s', _guid, tempDev.guid);
     if (tempDev.guid==_guid) {
       // A9CF56932262E112_246D00_0_224
       ret = d;
