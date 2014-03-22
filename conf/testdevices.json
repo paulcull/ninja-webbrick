@@ -12,7 +12,7 @@
 			"G":"243T01",
 			"V":0,
 			"D":202,
-			"Interval":10000
+			"Interval":100
 		},
 		{
 			"brickIp":"192.168.1.243",
@@ -26,7 +26,7 @@
 			"G":"243DI00",
 			"V":0,
 			"D":233,
-			"Interval":1800000
+			"Interval":180
 		},
 		{
 			"brickIp":"192.168.1.243",
@@ -43,6 +43,20 @@
 			"Interval":10000
 		},
 		{
+			"brickIp":"192.168.1.244",
+			"deviceType":"temp",
+			"deviceName":"Playroom Temp",
+			"zoneName":"playroom",
+			"zoneArea":"main",
+			"channel":1,
+			"readable":true,
+			"writeable":false,
+			"G":"244T01",
+			"V":0,
+			"D":202,
+			"Interval":1800
+		},		
+		{
 			"brickIp":"192.168.1.243",
 			"deviceType":"dimmer",
 			"deviceName":"Breakfast Room Dimmer",
@@ -54,7 +68,7 @@
 			"G":"243D03",
 			"V":0,
 			"D":234,
-			"Interval":15000
+			"Interval":150
 
 		}
 	]

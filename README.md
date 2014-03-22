@@ -1,7 +1,7 @@
 Ninja WebBrick Module
 =====================
 Author: Paul Cullender
-Version: 1.0
+Version: 1.1
 Status: Stable
 License: BSD
 =====================

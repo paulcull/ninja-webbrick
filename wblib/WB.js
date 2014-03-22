@@ -9,20 +9,23 @@ var util         = require('util')
 module.exports = WB;
 //util.inherits(WB,EventEmitter);
 
-function WB(config,app) {
+function WB(config,app,connPool) {
   //EventEmitter.call(this);
   if (!config.brickIp)
     throw new Error('Brick IP is required');
 
-  //var self = this;
+  var self = this;
 
   this._app = app;
   this._brick = config.brickIp;
   this._channel = config.channel;
+  this._config = config;
   this._key = '';
   this._authenticated = false;
   this._zone = config.zoneName;
-  this._zoneArea = config.zoneArea
+  this._zoneArea = config.zoneArea;
+  this._connPool = connPool;
+
 
 };
 
@@ -34,34 +37,48 @@ function WB(config,app) {
 
 WB.prototype.tempState = function(ch,cb) {
 
-  //var self = this;
+  var self = this;
   if (1<ch>5) throw new Error('Temperature channel must be between 1 and 5 inclusive');
-  var opts = {
-    method:'GET',
-    url:'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT + '/eventstate/' + wbu.Zones[this._zone.toLowerCase()] + '/state?attr=zoneTemp', 
-    json:{on:true},
-    timeout:10000
-  };
-  request(opts,function(e,r,b) {
-    if (e) cb(e)
-    else if (typeof cb === "function") {
-      if (typeof b != 'undefined') {
-        xml(b, function (error, result) {
+
+  this._app.log.debug('Requesting connection for %s from pool: %s : [%s out of %s] %s waiting',this._config.G,this._connPool.getName(),this._connPool.availableObjectsCount(),this._connPool.getPoolSize(),this._connPool.waitingClientsCount());
+  this._connPool.acquire(function(err,client) {
+    
+    if (err) {var errmsg = new Error('request body is undefined error: %s', b);};
+    self._app.log.debug('Recieved connection for %s from pool: %s : [%s out of %s] %s waiting',self._config.G,self._connPool.getName(),self._connPool.availableObjectsCount(),self._connPool.getPoolSize(),self._connPool.waitingClientsCount());
+
+    client.url = 'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT + '/eventstate/' + wbu.Zones[self._zone.toLowerCase()] + '/state?attr=zoneTemp', 
+    request(client,function(e,r,b) {
+      if (e) {
+        cb(e)
+        self._app.log.debug('Request Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+        self._connPool.release(client);
+      }
+      else if (typeof cb === "function") {
+        if (typeof b != 'undefined') {
+          xml(b, function (error, result) {
             if (error) {
               //console.log('XML parse error');
+              self._app.log.debug('XML Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+              self._connPool.release(client);
               return cb(error);
             } else if (/val/g.test(b)) {
-                  //console.log(result.val);
-                  return cb(false,result.val);
+              //console.log(result.val);
+              self._app.log.debug('Complete Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+              self._connPool.release(client);
+              return cb(false,result.val);
             }
-        });
-      } else {
-      var errmsg = new Error('request body is undefined error: %s', b);
-      return cb(errmsg);
+          });
+        } else {
+        var errmsg = new Error('request body is undefined error: %s', b);
+        self._app.log.debug('Undefined Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+        self._connPool.release(client);
+        return cb(errmsg);
+        }
       }
-    }
+    });
+    return this;
   });
-  return this;
+
 }
 
 WB.prototype.createHeart = function(ch,cb) {
@@ -75,68 +92,114 @@ WB.prototype.createState = function(ch,cb) {
 
 WB.prototype.dimmerState = function(ch,cb) {
 
+  var self = this;
   if (0<ch>3) throw new Error('Dimmer channel must be between 1 and 4 inclusive');
-  var opts = {
-    method:'GET',
-    url:'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT + '/eventstate/to_ui/'+ this._zone.toLowerCase() +'/lighting/' + this._zoneArea.toLowerCase()  + '/level?attr=val', 
-    json:{on:false},
-    timeout:10000
-  };
-  request(opts,function(e,r,b) {
-  
-    if (e) cb(e)
-    else if (typeof cb === "function") {
-      if (typeof b != 'undefined') {
-        xml(b, function (error, result) {
+
+  this._app.log.debug('Requesting connection for %s from pool: %s : [%s out of %s] %s waiting',this._config.G,this._connPool.getName(),this._connPool.availableObjectsCount(),this._connPool.getPoolSize(),this._connPool.waitingClientsCount());
+  this._connPool.acquire(function(err,client) {
+    
+    if (err) {var errmsg = new Error('request body is undefined error: %s', b);};
+    self._app.log.debug('Recieved connection for %s from pool: %s : [%s out of %s] %s waiting',self._config.G,self._connPool.getName(),self._connPool.availableObjectsCount(),self._connPool.getPoolSize(),self._connPool.waitingClientsCount());
+
+    client.url = 'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT + '/eventstate/to_ui/'+ self._zone.toLowerCase() +'/lighting/' + self._zoneArea.toLowerCase()  + '/level?attr=val', 
+
+    request(client,function(e,r,b) {
+      if (e) {
+        cb(e)
+        self._app.log.debug('Request Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+        self._connPool.release(client);
+      }
+      else if (typeof cb === "function") {
+        if (typeof b != 'undefined') {
+          xml(b, function (error, result) {
             if (error) {
+              //console.log('XML parse error');
+              self._app.log.debug('XML Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+              self._connPool.release(client);
               return cb(error);
             } else if (/err/g.test(b)) {
                 var errmsg = new Error('Error in response from GW: %s', result.err);
+                self._app.log.debug('Content Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+                self._connPool.release(client);
                 return cb(errmsg);            
             } else if (/val/g.test(b)) {
-                  return cb(false,result.val);
+              //console.log(result.val);
+              self._app.log.debug('Complete Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+              self._connPool.release(client);
+              return cb(false,result.val);
             }
-        });
-      } else {
-      var errmsg = new Error('request body is undefined error: %s', b);
-      return cb(errmsg);
+          });
+        } else {
+        var errmsg = new Error('request body is undefined error: %s', b);
+        self._app.log.debug('Undefined Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+        self._connPool.release(client);
+        return cb(errmsg);
+        }
       }
-    }
+    });
+    return this;
   });
-  return this;
+
 }
 
 WB.prototype.pirState = function(ch,cb) {
 
+  var self = this;
   if (0<ch>3) throw new Error('Pir channel must be between 1 and 4 inclusive');
+
   var opts = {
     method:'GET',
     url:'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT + '/wbsts/' + wbu.Bricks[room.toLowerCase()] + '/DO/' + wbu.ActiveStateSensor[room.toLowerCase()], 
     json:{on:false},
     timeout:10000
   };
-  request(opts,function(e,r,b) {  
-    if (e) cb(e)
-    else if (typeof cb === "function") {
-      if (typeof b != 'undefined') {
-        xml(b, function (error, result) {
+
+  this._app.log.debug('Requesting connection for %s from pool: %s : [%s out of %s] %s waiting',this._config.G,this._connPool.getName(),this._connPool.availableObjectsCount(),this._connPool.getPoolSize(),this._connPool.waitingClientsCount());
+  this._connPool.acquire(function(err,client) {
+    
+    if (err) {var errmsg = new Error('request body is undefined error: %s', b);};
+    self._app.log.debug('Recieved connection for %s from pool: %s : [%s out of %s] %s waiting',self._config.G,self._connPool.getName(),self._connPool.availableObjectsCount(),self._connPool.getPoolSize(),self._connPool.waitingClientsCount());
+
+    client.url = 'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT + '/wbsts/' + wbu.Bricks[room.toLowerCase()] + '/DO/' + wbu.ActiveStateSensor[room.toLowerCase()], 
+
+    request(client,function(e,r,b) {
+      if (e) {
+        cb(e)
+        self._app.log.debug('Request Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+        self._connPool.release(client);
+      }
+      else if (typeof cb === "function") {
+        if (typeof b != 'undefined') {
+          xml(b, function (error, result) {
             if (error) {
-              console.log('XML parse error');
+              //console.log('XML parse error');
+              self._app.log.debug('XML Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+              self._connPool.release(client);
               return cb(error);
             } else if (/err/g.test(b)) {
                 var errmsg = new Error('Error in response from GW: %s', result.err);
+                self._app.log.debug('Content Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+                self._connPool.release(client);
                 return cb(errmsg);            
             } else if (/val/g.test(b)) {
-                  return cb(false,result.val);
+              //console.log(result.val);
+              self._app.log.debug('Complete Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+              self._connPool.release(client);
+              return cb(false,result.val);
             }
-        });
-      } else {
-      var errmsg = new Error('request body is undefined error: %s', b);
-      return cb(errmsg);
+          });
+        } else {
+        var errmsg = new Error('request body is undefined error: %s', b);
+        self._app.log.debug('Undefined Error Releasing a connection for %s from pool: %s',self._config.G,self._connPool.getName());
+        self._connPool.release(client);
+        return cb(errmsg);
+        }
       }
-    }
+    });
+    return this;
   });
-  return this;
+
+
 }
 
 

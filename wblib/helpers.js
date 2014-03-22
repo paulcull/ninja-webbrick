@@ -21,7 +21,13 @@ exports.parseWBResponse = function(r) {
     }
     return [null,r];
 };
- 
+
+exports.getByValue = function(arr, value) {
+  for (var i=0, iLen=arr.length; i<iLen; i++) {
+    if (arr[i].b == 6) return arr[i];
+  }
+};
+
 exports.xpathWBResponse = function(r,xp) {
   var _doc = new dom().parseFromString(r);
   var output = xpath.select(xp, _doc).toString();

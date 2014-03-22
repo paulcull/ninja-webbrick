@@ -1,6 +1,6 @@
 {
   "name": "ninja-webbrick",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "description": "Webbrick Driver for NinjaBlock",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,8 @@
     "xregexp": "~2.0.0",
     "xpath": "~0.0.5",
     "xmldom": "~0.1.13",
-    "libxml-to-js": "~0.3.11"
+    "libxml-to-js": "~0.3.11",
+    "generic-pool" : "~2.0.4"
   },
   "repository": "",
   "keywords": [

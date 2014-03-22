@@ -2,6 +2,7 @@ var Device = require('./lib/device')
   , util = require('util')
   , stream = require('stream')
   , configHandlers = require('./lib/config-handlers')
+  , connectionPool = require('generic-pool')
   , Monitor = require('../ninja-webbrick/wblib/wb-interface')
   , wbHelpers = require('../ninja-webbrick/wblib/helpers');
 
@@ -42,8 +43,8 @@ var HELLO_WORLD_ANNOUNCEMENT = {
  */
 function nbWebBrick(opts,app) {
 
-console.log(opts);
-console.log(app);
+//console.log(opts);
+//console.log(app);
 
 var self = this;
 this._app = app;
@@ -53,12 +54,11 @@ this._app = app;
   } else {
     // create a holder for new devices 
     var devCount = 0;
-    var devs = new Array();  
+    var devs = [];  
+    var brickPool = {};
 
     app.on('client::up',function(){
-
       // The client is now connected to the Ninja Platform
-
       // Check if we have sent an announcement before.
       // If not, send one and save the fact that we have.
       if (!opts.hasSentAnnouncement) {
@@ -66,19 +66,42 @@ this._app = app;
         opts.hasSentAnnouncement = true;
         self.save();
       }
-
       // Loop through all the devices in the devices.json file
+        self._app.log.info('(WebBrick) Found %s WebBrick Devices',wbds.devices.length);
         wbds.devices.forEach(function(wbOpts){
           // Register a device
           self._app.log.info('(WebBrick) Found %s WebBrick Device Type %s',wbOpts.deviceName, wbOpts.deviceType);
-          devs.push(new Device(app, wbOpts));
+          if (!brickPool[wbOpts.brickIp]) {
+            self._app.log.info('Creating new connection pool for webbrick at %s',wbOpts.brickIp);
+            var pool = new connectionPool.Pool({
+                name     : 'Pool for Brick['+wbOpts.brickIp+']',
+                create   : function(callback) {
+                    var opts = new Object();
+                    opts.method = 'GET';
+                    opts.url = ''//'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT;
+                    opts.json = '{on:true}';
+                    opts.timeout = 1000;
+                    // parameter order: err, resource
+                    callback(null, opts, self._app.log);
+                },
+                //destroy  : function(client) { console.log('XXXXXXXXX');client = opts; },
+                destroy  : function(client) {client.url='';},
+                max      : 1,
+                refreshIdle : false,
+                // specifies how long a resource can stay idle in pool before being removed
+                idleTimeoutMillis : 10000,
+                // if true, logs via console.log - can also be a function
+                 log : false 
+            });
+            brickPool[wbOpts.brickIp] = pool;
+          };
+          devs.push(new Device(app, wbOpts, brickPool[wbOpts.brickIp]));
           self.emit('register', devs[devCount]);
           devCount++;
         });
     });
 
     self._app.log.info('(WebBrick) All registered. Total Device count is %s',devs.length);
-
   }
   //startup listener if enabled
   if (enabled && monitor) {
