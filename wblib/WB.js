@@ -299,22 +299,27 @@ WB.prototype.DigInState = function(ch,cb) {
 
 WB.prototype.DigInTrigger = function(ch,cb) {
 
+  console.log('in DI Trigger');
   var opts = {
     method:'GET',
     url:'http://'+this._brick+'/hid.spi?COM=DI'+ch,
     json:{on:false},
     timeout:3000
   };
+  console.log('about to request di trigger with opts : %s',JSON.stringify(opts));
   request(opts,function(e,r,b) {
     if (e) cb(e)
     else if (typeof cb === "function") {
       xml(b, function (error, result) {
           if (error) {
+            console.log('1: '+error);
             return cb(error);
           }
           else if (/WebbrickStatus/g.test(b)) {
+            console.log('2');
             return cb(false,Helpers.arrayFromMask(result.DI)[ch]);
           } else {
+            console.log('3');
             return cb(true);
           }
       });

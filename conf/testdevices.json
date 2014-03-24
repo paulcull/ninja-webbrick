@@ -57,6 +57,20 @@
 			"Interval":1800
 		},		
 		{
+			"brickIp":"192.168.1.244",
+			"deviceType":"button",
+			"deviceName":"Playroom Front Switch 1",
+			"zoneName":"playroom",
+			"zoneArea":"main",
+			"channel":3,
+			"readable":true,
+			"writeable":true,
+			"G":"244DI03",
+			"V":0,
+			"D":233,
+			"Interval":1200000
+		},
+		{
 			"brickIp":"192.168.1.243",
 			"deviceType":"dimmer",
 			"deviceName":"Breakfast Room Dimmer",
