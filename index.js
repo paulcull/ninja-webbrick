@@ -98,6 +98,7 @@ this._app = app;
           };
           devs.push(new Device(app, wbOpts, brickPool[wbOpts.brickIp]));
           self.emit('register', devs[devCount]);
+          self.emit('heartbeat');
           devCount++;
         });
     });
