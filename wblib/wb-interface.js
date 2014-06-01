@@ -4,6 +4,6 @@ var WB = require('./WB');
 // exports.discover = require('./Discoverer');
 exports.listen = require('./UDPServer');
 
-exports.createClient = function(wbOpts,app,connPool) {
- return new WB(wbOpts,app,connPool);
+exports.createClient = function(wbOpts,logger,connPool) {
+ return new WB(wbOpts,logger,connPool);
 };

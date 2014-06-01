@@ -1,3 +1,4 @@
+'use strict';
 var Device = require('./lib/device')
   , util = require('util')
   , stream = require('stream')
@@ -7,8 +8,8 @@ var Device = require('./lib/device')
   , wbHelpers = require('../ninja-webbrick/wblib/helpers');
 
 //Limit Devices to a sample for dev / testing
-var wbds = require('./conf/devices')
-//var wbds = require('./conf/testdevices')
+var wbds = require('./conf/devices');
+//var wbds = require('./conf/testdevices');
 //var wbds = require('./conf/testdevices_1temp');
 //var wbds = {"devices":[]};
 
@@ -77,9 +78,9 @@ this._app = app;
             var pool = new connectionPool.Pool({
                 name     : 'Pool for Brick['+wbOpts.brickIp+']',
                 create   : function(callback) {
-                    var opts = new Object();
+                    var opts = {};
                     opts.method = 'GET';
-                    opts.url = ''//'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT;
+                    opts.url = '';//'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT;
                     opts.json = '{on:true}';
                     opts.timeout = 1000;
                     // parameter order: err, resource
@@ -95,10 +96,10 @@ this._app = app;
                  log : false 
             });
             brickPool[wbOpts.brickIp] = pool;
-          };
-          devs.push(new Device(app, wbOpts, brickPool[wbOpts.brickIp]));
+          }
+          devs.push(new Device(app.log, wbOpts, brickPool[wbOpts.brickIp]));
           self.emit('register', devs[devCount]);
-          devs[devCount].emit('heartbeat');
+          //devs[devCount].emit('heartbeat');
           devCount++;
         });
     });
@@ -112,15 +113,14 @@ this._app = app;
       var devRef = wbHelpers.getDevIndex(devs, UDPEvent.addr, UDPEvent.PacketSource, UDPEvent.SourceChannel, app.id);
         if (devRef != 'error') {
           self._app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
-          devs[devRef].emit('data',UDPEvent.data)
+          devs[devRef].emit('data',UDPEvent.data);
           } else {
             self._app.log.error('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
           }
       });
-    this.UDPListener = UDPListener
+    this.UDPListener = UDPListener;
   }
-
-};
+}
 
 /**
  * Called when a user prompts a configuration.
