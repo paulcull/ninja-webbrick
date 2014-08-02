@@ -216,6 +216,7 @@ WB.prototype.command = function(cmd,cb) {
     json:{on:true},
     timeout:3000
   };
+  console.log('Going to run command %s : full URL : %s', cmd, url);
   request(opts,function(e,r,b) {
     if (e) cb(e)
     else if (typeof cb === "function") cb.apply(this,Helpers.parseWBResponse(b));
