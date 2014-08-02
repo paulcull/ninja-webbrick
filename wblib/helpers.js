@@ -41,11 +41,11 @@ exports.regexWBResponse = function(r,m) {
 };
 
 exports.getValFromResponse = function(response, type) {
-  if (type == "send") {
-    var _regEx = new RegExp("<h2>(.*?)</h2>");
-  } else {
-    var _regEx = new RegExp("<val>(.*?)</val>");
-  }
+    if (type == "send") {
+        var _regEx = new RegExp("<h2>(.*?)</h2>");
+    } else {
+        var _regEx = new RegExp("<val>(.*?)</val>");
+    }
   var output = _regEx.exec(response);
   return output;
 };

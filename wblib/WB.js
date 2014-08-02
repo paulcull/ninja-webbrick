@@ -87,6 +87,10 @@ WB.prototype.createHeart = function(ch,cb) {
   return cb(false,'awaiting heartbeat...');
 }
 
+WB.prototype.createCommand = function(ch,cb) {
+  return cb(false,'awaiting command...');
+}
+
 
 WB.prototype.createState = function(ch,cb) {
   return cb(false,null);
@@ -203,6 +207,21 @@ WB.prototype.pirState = function(ch,cb) {
 
 
 }
+
+
+WB.prototype.command = function(cmd,cb) {
+  var opts = {
+    method:'PUT',
+    url:'http://'+this._brick+'/hid.spi?COM='+cmd,
+    json:{on:true},
+    timeout:3000
+  };
+  request(opts,function(e,r,b) {
+    if (e) cb(e)
+    else if (typeof cb === "function") cb.apply(this,Helpers.parseWBResponse(b));
+  });
+  return this;
+};
 
 
 WB.prototype.dimmerOn = function(ch,cb) {

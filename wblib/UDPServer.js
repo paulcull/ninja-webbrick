@@ -14,9 +14,12 @@ function WBListener(port,devs,cb) {
   this.server = server;
 
   server.on("message", function (msg, rinfo) {
-    fullMsg = helper.UDPMessage(msg,rinfo);
+      var fullMsg = helper.UDPMessage(msg, rinfo);
     //console.log('server Msg: %s',JSON.stringify(fullMsg));
-    if (fullMsg.ProcessMsg) {cb(fullMsg)};
+      if (!fullMsg.ProcessMsg) {
+      } else {
+          cb(fullMsg)
+      }
   });
 
   server.bind(port);
@@ -28,8 +31,7 @@ function WBListener(port,devs,cb) {
 
   server.on("error", handleSearchResults);
   //setTimeout(handleSearchResults,6000);
-};
-
+}
 WBListener.prototype.stop = function() {
   console.log('Stopping WBListener server...');
   this.server.close();

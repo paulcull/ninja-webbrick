@@ -72,6 +72,34 @@
 		},
 		{
 			"brickIp":"192.168.1.243",
+			"deviceType":"dimmer_text",
+			"deviceName":"Breakfast Room Dimmer Manual",
+			"zoneName":"breakfastroom",
+			"zoneArea":"main",
+			"channel":3,
+			"readable":true,
+			"writeable":true,
+			"G":"243D03M",
+			"V":0,
+			"D":240,
+			"Interval":1200000
+		},
+		{
+			"brickIp":"192.168.1.243",
+			"deviceType":"text_command",
+			"deviceName":"Command - 1",
+			"zoneName":"Command",
+			"zoneArea":"main",
+			"channel":"0",
+			"readable":true,
+			"writeable":false,
+			"G":"243CC00",
+			"V":0,
+			"D":240,
+			"Interval":20000
+		},
+		{
+			"brickIp":"192.168.1.243",
 			"deviceType":"dimmer",
 			"deviceName":"Breakfast Room Dimmer",
 			"zoneName":"breakfastroom",
@@ -83,7 +111,6 @@
 			"V":0,
 			"D":234,
 			"Interval":150
-
 		}
 	]
 }

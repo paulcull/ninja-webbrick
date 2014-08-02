@@ -10,6 +10,7 @@ var Device = require('./lib/device')
 //Limit Devices to a sample for dev / testing
 var wbds = require('./conf/devices');
 //var wbds = require('./conf/testdevices');
+//var wbds = require('./conf/dimonlydevices');
 //var wbds = require('./conf/testdevices_1temp');
 //var wbds = {"devices":[]};
 
@@ -51,12 +52,13 @@ function nbWebBrick(opts,app) {
 var self = this;
 this._app = app;
 
+var devs = [];
+
   if (!enabled) {
     app.log.info('(WebBrick) WebBrick driver is disabled');
   } else {
     // create a holder for new devices 
     var devCount = 0;
-    var devs = [];  
     var brickPool = {};
 
     app.on('client::up',function(){
@@ -80,7 +82,7 @@ this._app = app;
                 create   : function(callback) {
                     var opts = {};
                     opts.method = 'GET';
-                    opts.url = '';//'http://' + wbu.HOMEURL + ':' + wbu.HOMEPORT;
+                    opts.url = '';
                     opts.json = '{on:true}';
                     opts.timeout = 1000;
                     // parameter order: err, resource
@@ -112,10 +114,10 @@ this._app = app;
     var UDPListener = new Monitor.listen('2552',devs,function(UDPEvent){
       var devRef = wbHelpers.getDevIndex(devs, UDPEvent.addr, UDPEvent.PacketSource, UDPEvent.SourceChannel, app.id);
         if (devRef != 'error') {
-          self._app.log.debug('(Webbrick) set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
+          self._app.log.debug('(Webbrick) UDP - set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
           devs[devRef].emit('data',UDPEvent.data);
           } else {
-            self._app.log.debug('(Webbrick) couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
+            self._app.log.debug('(Webbrick) UDP - couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
           }
       });
     this.UDPListener = UDPListener;
