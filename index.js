@@ -116,9 +116,19 @@ var devs = [];
         if (devRef != 'error') {
           self._app.log.debug('(Webbrick) UDP - set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
           devs[devRef].emit('data',UDPEvent.data);
-          } else {
-            self._app.log.debug('(Webbrick) UDP - couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
+          if (UDPEvent.PacketSource=='ST') {
+            // hack to keep pumping the command text out
+            var commandRef = wbHelpers.getDevIndex(devs, UDPEvent.addr, 'CC', UDPEvent.SourceChannel, app.id);                 
+            if (commandRef != 'error') {
+              self._app.log.debug('(Webbrick) UDP - set %s at %s to data %s',devs[devRef].wbOpts.deviceType,devs[devRef].guid,JSON.stringify(UDPEvent.data));
+              devs[devRef].emit('data',UDPEvent.data);
+            } else {
+              self._app.log.debug('(Webbrick) UDP - couldn\'t find device for UDPEvent: CC');              
+            }
           }
+        } else {
+          self._app.log.debug('(Webbrick) UDP - couldn\'t find device for UDPEvent: %s',JSON.stringify(UDPEvent));
+        }
       });
     this.UDPListener = UDPListener;
   }

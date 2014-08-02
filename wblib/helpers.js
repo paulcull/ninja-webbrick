@@ -71,7 +71,7 @@ exports.arrayFromMask = arrayFromMask;
 
 //Get NB device ID based on a couple of params
 // @devs collection of device ojects
-// @IP - IP address
+// @IP - IP address 
 // @DevType - type of device 
 // @ch - channel 
 exports.getDevIndex = function(devs, IP, DevType, ch, appID) {
@@ -109,6 +109,10 @@ exports.getDevIndex = function(devs, IP, DevType, ch, appID) {
       break;
       case 'ST':
         var _DevType = 'ST';
+        var _ch = '00';
+      break;
+      case 'CC':
+        var _DevType = 'CC';
         var _ch = '00';
       break;
     }
