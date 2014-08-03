@@ -216,7 +216,7 @@ WB.prototype.command = function(cmd,cb) {
     json:{on:true},
     timeout:3000
   };
-  console.log('Going to run command %s : full URL : %s', cmd, url);
+  //console.log('Going to run command %s : full URL : %s', cmd, opts.url);
   request(opts,function(e,r,b) {
     if (e) cb(e)
     else if (typeof cb === "function") cb.apply(this,Helpers.parseWBResponse(b));
@@ -232,6 +232,7 @@ WB.prototype.dimmerOn = function(ch,cb) {
     json:{on:true},
     timeout:3000
   };
+  //console.log('Going to run dimmerOn command %s : full URL : %s', ch, url);
   request(opts,function(e,r,b) {
     if (e) cb(e)
     else if (typeof cb === "function") cb.apply(this,Helpers.parseWBResponse(b));
@@ -246,6 +247,7 @@ WB.prototype.dimmerLevel = function(ch,lvl,cb) {
     json:{on:true},
     timeout:3000
   };
+  //console.log('Going to run dimmerLevel command %s:%s : full URL : %s', ch, lvl, url);
   request(opts,function(e,r,b) {
     if (e) cb(e)
     else if (typeof cb === "function") cb.apply(this,Helpers.parseWBResponse(b));
