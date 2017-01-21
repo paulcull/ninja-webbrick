@@ -1,5 +1,7 @@
 Ninja WebBrick Module
 =====================
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/paulcull/ninja-webbrick.svg)](https://greenkeeper.io/)
 Author: Paul Cullender
 Version: 1.1
 Status: Stable
