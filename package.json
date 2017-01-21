@@ -7,14 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "request": "~2.16.0",
-    "async": "~0.1.22",
-    "bit-mask": "~0.0.1",
-    "xregexp": "~2.0.0",
+    "request": "~2.79.0",
+    "async": "~2.1.4",
+    "bit-mask": "~1.0.1",
+    "xregexp": "~3.1.1",
     "xpath": "~0.0.5",
     "xmldom": "~0.1.13",
     "libxml-to-js": "~0.3.11",
-    "generic-pool" : "~2.0.4"
+    "generic-pool" : "~3.1.6"
   },
   "repository": "",
   "keywords": [
